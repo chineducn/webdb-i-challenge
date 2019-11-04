@@ -7,6 +7,19 @@ const server = express();
 server.use(express.json());
 
 server.get('/', (req, res) => {
+    const { limit, offset, orderBy, orderDir } = req.query
+    db('accounts').limit(limit).offset(offset).orderBy(orderBy, orderDir)
+        .then(accounts => {
+            res.status(200).json(accounts)
+        })
+        .catch(error => {
+            res
+                .status(500)
+                .json("Error in getting accounts")
+        });
+})
+
+server.get('/', (req, res) => {
     db('accounts')
         .then(accounts => {
             res.status(200).json(accounts)
@@ -17,6 +30,7 @@ server.get('/', (req, res) => {
                 .json("Error in getting accounts")
         });
 })
+
 
 server.post('/', (req, res) => {
     db('accounts').insert({ name: req.body.name, budget: req.body.budget})
